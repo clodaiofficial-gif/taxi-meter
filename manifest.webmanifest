@@ -1,0 +1,10 @@
+{
+  "name": "TAXI METER",
+  "short_name": "TAXI METER",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#05070a",
+  "theme_color": "#05070a",
+  "description": "Offline taxi meter simulator"
+}

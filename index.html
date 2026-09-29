@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Taxi Meter</title>
+<style>
+:root{
+  --bg:#020509; --panel:#07101a; --panel2:#0b1521; --line:#17314b;
+  --text:#f5f9ff; --muted:#8ea4bd; --blue:#168cff; --blue2:#36c7ff;
+  --gray:#7f8da0; --orange:#ff9d20; --red:#ff3b4d; --green:#18d477; --purple:#c33cff;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif}
+button,input{font:inherit}
+button{border:0;color:inherit;background:none;cursor:pointer;touch-action:manipulation}
+button:disabled{cursor:default}
+#app{height:100dvh;width:100vw;min-height:520px;overflow:hidden;padding:clamp(8px,1.1vw,18px);
+  background:
+    radial-gradient(ellipse at 47% 34%,rgba(14,72,132,.18),transparent 42%),
+    linear-gradient(135deg,#010204 0%,#06101b 48%,#020509 100%);
+}
+.frame{height:100%;border:1px solid #14283c;border-radius:20px;position:relative;overflow:hidden;
+  background:linear-gradient(145deg,rgba(9,19,30,.95),rgba(1,5,9,.98));
+  box-shadow:inset 0 0 50px rgba(0,0,0,.7),0 0 40px rgba(0,75,130,.12)}
+.frame:before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(125deg,transparent 0 33%,rgba(23,79,125,.12) 39%,transparent 47%),
+             linear-gradient(315deg,transparent 0 70%,rgba(18,62,100,.10) 75%,transparent 80%)}
+.top{height:13%;min-height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 2.2%;
+  border-bottom:1px solid rgba(28,72,108,.55);position:relative;z-index:2}
+.brand{display:flex;align-items:center;gap:12px}
+.logoMark{width:45px;height:30px;display:grid;grid-template-columns:repeat(5,7px);grid-auto-rows:7px;gap:2px}
+.logoMark i{background:#1d8fff;box-shadow:0 0 8px rgba(29,143,255,.6)}
+.logoMark i:nth-child(2),.logoMark i:nth-child(4),.logoMark i:nth-child(6),.logoMark i:nth-child(8),.logoMark i:nth-child(10){opacity:.9}
+.brandTitle{font-size:clamp(16px,1.7vw,25px);letter-spacing:.16em;color:#e9f5ff}
+.brandSub{font-size:clamp(8px,.8vw,12px);color:#78a6cf;letter-spacing:.12em;margin-top:1px}
+.clock{font-variant-numeric:tabular-nums;color:#dceaff;text-align:right}
+.clock .date{font-size:clamp(11px,1vw,15px);color:#9eb6cf;margin-right:14px}
+.clock .time{font-size:clamp(20px,2vw,31px);letter-spacing:.04em}
+
+.main{height:87%;display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,20%);gap:1.1%;padding:1.3% 1.2%;position:relative;z-index:2}
+.left{min-width:0;display:grid;grid-template-rows:minmax(0,1fr) auto auto;gap:1.2%;min-height:0}
+.meter{min-height:0;border:1px solid #173b5e;border-radius:18px;background:
+  radial-gradient(ellipse at 70% 0%,rgba(12,76,135,.20),transparent 35%),
+  linear-gradient(145deg,#07111d,#02070d 72%);
+  box-shadow:inset 0 0 0 1px rgba(63,133,192,.07),0 0 25px rgba(0,95,160,.10);padding:2.8%;position:relative;overflow:hidden}
+.meter:after{content:"";position:absolute;inset:-30%;background:linear-gradient(125deg,transparent 37%,rgba(39,111,177,.07) 45%,transparent 52%);transform:rotate(-4deg);pointer-events:none}
+.status{display:flex;align-items:center;gap:10px;width:max-content;padding:7px 18px;border:1px solid #1d5b8c;border-radius:9px;
+  color:#bfeaff;background:rgba(8,25,39,.7);box-shadow:0 0 12px rgba(0,141,255,.12)}
+.dot{width:10px;height:10px;border-radius:50%;background:#2cc7ff;box-shadow:0 0 10px #2cc7ff}
+.statusLabel{font-size:clamp(18px,2vw,30px);font-weight:650}
+.fareArea{position:absolute;left:35%;right:5%;top:12%;height:45%;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;padding-right:3%}
+.fareTitle{font-size:clamp(14px,1.4vw,22px);color:#b9cce0;letter-spacing:.12em;margin-bottom:2px}
+.fare{font-variant-numeric:tabular-nums;white-space:nowrap;font-size:clamp(58px,7.2vw,108px);line-height:.95;font-weight:700;letter-spacing:.02em;
+  text-shadow:0 0 18px rgba(60,185,255,.32);transition:text-shadow .25s}
+.yen{font-size:clamp(25px,2.7vw,42px);margin-left:7px;font-weight:500}
+.info{position:absolute;left:3%;top:29%;width:30%;color:#b7c9dd}
+.infoTitle{font-size:clamp(13px,1.3vw,20px);letter-spacing:.06em}
+.elapsed{font-size:clamp(30px,3.5vw,52px);font-variant-numeric:tabular-nums;color:#eaf5ff;margin-top:5px;text-shadow:0 0 12px rgba(65,175,255,.2)}
+.progressWrap{position:absolute;left:3%;right:3%;bottom:8%}
+.progressTitle{font-size:clamp(13px,1.3vw,20px);margin-bottom:8px;color:#dcecff}
+.progress{height:clamp(16px,2vw,25px);border:1px solid #1b67a4;border-radius:99px;background:#030a12;overflow:hidden;box-shadow:inset 0 0 10px #000}
+.progressFill{height:100%;width:0%;background:linear-gradient(90deg,#1168ff,#35cfff);box-shadow:0 0 14px rgba(35,178,255,.75);transition:width .2s}
+.lower{height:auto;min-height:12%;border:1px solid #173b5e;border-radius:13px;background:linear-gradient(145deg,#081521,#02070d);
+  display:flex;align-items:center;padding:1.2% 2%;position:relative;overflow:hidden}
+.lower:before{content:"";position:absolute;left:0;top:0;bottom:0;width:38%;background:linear-gradient(115deg,rgba(15,105,190,.16),transparent 70%);pointer-events:none}
+.initial{font-size:clamp(15px,1.5vw,23px);color:#8ec8f5;position:relative}
+.initial strong{display:block;font-size:clamp(25px,2.7vw,40px);color:#f5faff;line-height:1.05}
+.bottomActions{display:grid;grid-template-columns:1fr 1fr;gap:2%;min-height:10%}
+.action{border-radius:14px;border:1px solid #23415f;background:linear-gradient(145deg,#0b1724,#03070c);font-size:clamp(18px,2vw,28px);letter-spacing:.08em;
+  box-shadow:inset 0 0 18px rgba(31,77,120,.08);transition:.2s}
+.action.reset{border-color:#7b2330;color:#ff6d7b;box-shadow:inset 0 0 20px rgba(255,46,71,.12)}
+.action.pay{border-color:#1769c4;color:#55adff;box-shadow:inset 0 0 20px rgba(0,102,255,.12)}
+.action:disabled{opacity:.25}
+
+.right{display:grid;grid-template-rows:repeat(5,1fr) auto;gap:1.3%;min-height:0}
+.sideBtn{min-height:0;border-radius:13px;border:1px solid #263a51;background:linear-gradient(145deg,#111e2d,#07101a);
+  position:relative;overflow:hidden;font-size:clamp(17px,1.8vw,28px);letter-spacing:.08em;color:#9aabc0;
+  box-shadow:inset 0 0 18px rgba(60,100,140,.05);transition:.2s}
+.sideBtn:before{content:"";position:absolute;left:10px;top:18%;bottom:18%;width:4px;border-radius:3px;background:#40556c;transition:.2s}
+.sideBtn.car{border-color:#7a8797;color:#e4eaf2}
+.sideBtn.car:before{background:#e4eaf2}
+.sideBtn.real{border-color:#075fbd;color:#c9eaff}
+.sideBtn.real.active{background:linear-gradient(145deg,rgba(11,96,181,.72),rgba(6,33,65,.95));border-color:#21a8ff;color:#fff;box-shadow:0 0 16px rgba(25,145,255,.36),inset 0 0 25px rgba(20,120,255,.18)}
+.sideBtn.real.active:before{background:#2bc4ff;box-shadow:0 0 12px #2bc4ff}
+.sideBtn.pay{border-color:#82571d;color:#ffd59a}
+.sideBtn.pickup{border-color:#7e2632;color:#ffb0b7}
+.sideBtn.speed{border-color:#1b6f48;color:#9ff2c8}
+.sideBtn.speed.active{background:linear-gradient(145deg,rgba(9,130,76,.70),rgba(3,43,28,.95));border-color:#27db83;color:#effff7;box-shadow:0 0 16px rgba(24,213,119,.3),inset 0 0 25px rgba(24,213,119,.16)}
+.sideBtn.speed.active:before{background:#39ed99;box-shadow:0 0 12px #39ed99}
+.sideBtn:disabled{opacity:.38}
+.sideBtn.pickup:disabled{opacity:.36}
+.surcharge{height:100%;border:1px solid #70228a;border-radius:12px;background:linear-gradient(145deg,#180b24,#08030d);
+  color:#e9a5ff;display:flex;align-items:center;justify-content:center;font-size:clamp(15px,1.5vw,22px);letter-spacing:.08em;transition:.25s}
+.surcharge.active{border-color:#dc47ff;background:linear-gradient(145deg,rgba(109,24,143,.62),rgba(24,4,35,.95));color:#fff;box-shadow:0 0 18px rgba(205,50,255,.28),inset 0 0 25px rgba(193,35,255,.14)}
+.settings{height:100%;border:1px solid #2a4058;border-radius:12px;background:#08111b;color:#9db0c5;font-size:clamp(15px,1.4vw,20px);transition:.2s}
+.settings:disabled{opacity:.3}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.68);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:50}
+.modal.show{display:flex}
+.dialog{width:min(520px,82vw);border:1px solid #1d5d91;border-radius:18px;background:linear-gradient(145deg,#0b1724,#02060b);
+  box-shadow:0 0 45px rgba(0,90,160,.25),inset 0 0 30px rgba(0,100,180,.08);padding:26px}
+.dialog h2{margin:0 0 12px;font-size:24px}
+.dialog p{color:#a9bdd1;margin:0 0 22px}
+.dialogBtns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dialog button{padding:14px;border-radius:11px;border:1px solid #29445f;background:#081421}
+.dialog .danger{border-color:#7a2733;color:#ff8792}
+
+.settingsPanel{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(7px);display:none;z-index:40;overflow:auto}
+.settingsPanel.show{display:block}
+.settingsCard{width:min(760px,92vw);margin:4vh auto;background:linear-gradient(145deg,#0b1724,#02060b);border:1px solid #1b5b8e;border-radius:18px;padding:22px;box-shadow:0 0 45px rgba(0,90,160,.25)}
+.settingsCard h2{margin:0 0 18px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{border:1px solid #213a52;border-radius:10px;padding:11px;background:#06101a}.field label{display:block;color:#9eb5ca;font-size:13px;margin-bottom:6px}
+.field input{width:100%;background:#02070d;border:1px solid #29445e;border-radius:8px;padding:9px;color:#fff}
+.settingsFooter{margin-top:16px;display:flex;justify-content:flex-end;gap:10px}
+.settingsFooter button{padding:11px 20px;border-radius:10px;border:1px solid #31506d;background:#081521}
+.settingsFooter .save{border-color:#148cff;color:#76c4ff}
+@media (orientation:portrait){
+  #portrait{display:flex}
+}
+#portrait{display:none;position:fixed;inset:0;background:#020509;z-index:100;align-items:center;justify-content:center;text-align:center;padding:30px}
+#portrait .pbox{border:1px solid #174b72;border-radius:16px;padding:30px;color:#cfe7fb;background:#07111b}
+@media (max-height:600px){.top{height:12%}.main{height:88%}.status{padding:5px 14px}.progressWrap{bottom:6%}}
+</style>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#05070a"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="TAXI METER">
+</head>
+<body>
+<div id="app">
+  <div class="frame">
+    <header class="top">
+      <div class="brand">
+        <div class="logoMark" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <div><div class="brandTitle">TAXI METER</div><div class="brandSub">Drive Your Time</div></div>
+      </div>
+      <div class="clock"><span class="date" id="date"></span><span class="time" id="clock"></span></div>
+    </header>
+
+    <main class="main">
+      <section class="left">
+        <div class="meter" id="meter">
+          <div class="status"><span class="dot"></span><span class="statusLabel" id="statusLabel">空車</span></div>
+          <div class="info">
+            <div class="infoTitle">経過時間</div>
+            <div class="elapsed" id="elapsed">00:00</div>
+          </div>
+          <div class="fareArea">
+            <div class="fareTitle">運賃</div>
+            <div class="fare" id="fare">0<span class="yen">円</span></div>
+          </div>
+          <div class="progressWrap">
+            <div class="progressTitle">次の加算まで</div>
+            <div class="progress"><div class="progressFill" id="progressFill"></div></div>
+          </div>
+        </div>
+
+        <div class="lower">
+          <div class="initial">初乗り<strong id="initialDisplay">500円</strong></div>
+          <div style="margin-left:auto;text-align:right;color:#9db3c8;font-size:clamp(12px,1.1vw,16px)" id="fareHint"></div>
+        </div>
+
+        <div class="bottomActions">
+          <button class="action reset" id="resetBtn">リセット</button>
+          <button class="action pay" id="payBtn" disabled>支払</button>
+        </div>
+      </section>
+
+      <aside class="right">
+        <button class="sideBtn car" id="emptyBtn">空車</button>
+        <button class="sideBtn real" id="realBtn">実車</button>
+        <button class="sideBtn pay" id="sidePay" disabled>支払</button>
+        <button class="sideBtn pickup" id="pickupBtn">迎車</button>
+        <button class="sideBtn speed" id="speedBtn" disabled>高速</button>
+        <button class="surcharge" id="surchargeBtn">割増</button>
+        <button class="settings" id="settingsBtn">設定</button>
+      </aside>
+    </main>
+  </div>
+</div>
+
+<div class="modal" id="resetModal">
+  <div class="dialog">
+    <h2>リセット</h2><p>現在の料金・状態をリセットしますか？</p>
+    <div class="dialogBtns"><button id="cancelReset">キャンセル</button><button class="danger" id="confirmReset">リセット</button></div>
+  </div>
+</div>
+
+<div class="settingsPanel" id="settingsPanel">
+  <div class="settingsCard">
+    <h2>設定</h2>
+    <div class="grid">
+      <div class="field"><label>初乗り料金（円）</label><input id="sInitialFare" type="number" min="0" step="1"></div>
+      <div class="field"><label>初乗り時間（分）</label><input id="sInitialMin" type="number" min="0.1" step="0.1"></div>
+      <div class="field"><label>加算時間（分）</label><input id="sIncrementMin" type="number" min="0.1" step="0.1"></div>
+      <div class="field"><label>加算額（円）</label><input id="sIncrementFare" type="number" min="0" step="1"></div>
+      <div class="field"><label>迎車料金（円）</label><input id="sPickupFare" type="number" min="0" step="1"></div>
+      <div class="field"><label>高速増加率（%）</label><input id="sSpeedRate" type="number" min="0" step="1"></div>
+      <div class="field"><label>割増開始時刻</label><input id="sStart" type="time"></div>
+      <div class="field"><label>割増終了時刻</label><input id="sEnd" type="time"></div>
+      <div class="field"><label>割増率（%）</label><input id="sSurchargeRate" type="number" min="0" step="1"></div>
+    </div>
+    <div class="settingsFooter"><button id="closeSettings">キャンセル</button><button class="save" id="saveSettings">保存</button></div>
+  </div>
+</div>
+
+<div id="portrait"><div class="pbox">このメーターは横向き専用です。<br>iPadを横向きにしてください。</div></div>
+
+<script>
+const defaults={initialFare:500,initialMin:3,incrementMin:2,incrementFare:200,pickupFare:500,speedRate:10,surchargeStart:"22:00",surchargeEnd:"05:00",surchargeRate:20};
+let settings=loadSettings(), state="empty", fare=0, rideStart=null, paidAt=null, speedOn=false, rideBase=0, lastFare=0;
+
+const $=id=>document.getElementById(id);
+const stateLabel=$("statusLabel");
+
+function loadSettings(){try{return {...defaults,...JSON.parse(localStorage.getItem("taxiMeterSettings")||"{}")}}catch(e){return {...defaults}}}
+function saveLocal(){localStorage.setItem("taxiMeterSettings",JSON.stringify(settings))}
+function fmtYen(n){return Math.round(n).toLocaleString("ja-JP")+"<span class='yen'>円</span>"}
+function roundYen(n){return Math.round(n)}
+function nowMs(){return Date.now()}
+function isSurcharge(date=new Date()){
+  const [sh,sm]=settings.surchargeStart.split(":").map(Number), [eh,em]=settings.surchargeEnd.split(":").map(Number);
+  const mins=date.getHours()*60+date.getMinutes()+date.getSeconds()/60, s=sh*60+sm, e=eh*60+em;
+  return s<e ? mins>=s&&mins<e : (mins>=s||mins<e);
+}
+function multiplier(){
+  return (isSurcharge()?1+Number(settings.surchargeRate)/100:1) * (speedOn?1+Number(settings.speedRate)/100:1);
+}
+function fareAt(elapsedSec){
+  if(state==="empty") return 0;
+  let f=Number(settings.initialFare);
+  const initial=Number(settings.initialMin)*60, inc=Number(settings.incrementMin)*60, add=Number(settings.incrementFare);
+  if(elapsedSec>=initial && inc>0){
+    const count=Math.floor((elapsedSec-initial)/inc)+1;
+    // 加算分だけ、その瞬間の倍率で計算。過去に確定した加算額は変更しない。
+    // 表示用には現在の倍率で概算し、tick()ではイベント単位で確定額を積算する。
+  }
+  return f;
+}
+let fareEvents=0, fareAccumulated=0, nextThreshold=0;
+function resetRideClock(){rideStart=null;fareEvents=0;fareAccumulated=0;nextThreshold=Number(settings.initialMin)*60;}
+function updateFareByTime(){
+  if(state!=="service") return;
+  const elapsed=(nowMs()-rideStart)/1000;
+  const initial=Number(settings.initialMin)*60, inc=Number(settings.incrementMin)*60;
+  if(elapsed < initial){ fare=Number(settings.initialFare); return; }
+  const count=inc>0 ? Math.floor((elapsed-initial)/inc)+1 : 0;
+  while(fareEvents<count){
+    fareEvents++;
+    fareAccumulated += roundYen(Number(settings.incrementFare)*multiplier());
+  }
+  fare=roundYen(rideBase + Number(settings.initialFare)+fareAccumulated);
+}
+function elapsedSec(){
+  if(state==="service"&&rideStart) return Math.max(0,(nowMs()-rideStart)/1000);
+  if(state==="paid"&&rideStart&&paidAt) return Math.max(0,(paidAt-rideStart)/1000);
+  return 0;
+}
+function progress(){
+  const t=elapsedSec(), initial=Number(settings.initialMin)*60, inc=Number(settings.incrementMin)*60;
+  if(state==="empty") return 0;
+  if(t<initial) return Math.max(0,Math.min(1,t/initial));
+  if(inc<=0) return 1;
+  const since=(t-initial)%inc;
+  return Math.max(0,Math.min(1,since/inc));
+}
+function setState(s){
+  state=s;
+  stateLabel.textContent={empty:"空車",pickup:"迎車",service:"実車",paid:"支払"}[s];
+  $("realBtn").classList.toggle("active",s==="service");
+  $("speedBtn").classList.toggle("active",speedOn);
+  $("speedBtn").disabled=s!=="service";
+  $("pickupBtn").disabled=s!=="empty";
+  $("emptyBtn").disabled=s!=="empty";
+  $("sidePay").disabled=s!=="service";
+  $("payBtn").disabled=s!=="service";
+  $("settingsBtn").disabled=s!=="empty";
+  $("surchargeBtn").classList.toggle("active",isSurcharge() && s!=="empty");
+  document.querySelector(".meter").style.boxShadow = s==="service"
+    ? "inset 0 0 0 1px rgba(63,133,192,.07), 0 0 28px rgba(0,110,220,.15)"
+    : "inset 0 0 0 1px rgba(63,133,192,.07), 0 0 25px rgba(0,95,160,.10)";
+}
+function startService(){
+  if(state==="service"||state==="paid") return;
+  if(state==="empty"){rideBase=0;fare=Number(settings.initialFare);rideStart=nowMs();paidAt=null;fareEvents=0;fareAccumulated=0;}
+  else if(state==="pickup"){rideBase=Number(settings.pickupFare);rideStart=nowMs();paidAt=null;fareEvents=0;fareAccumulated=0;fare=rideBase+Number(settings.initialFare);}
+  setState("service");
+}
+function pickup(){
+  if(state!=="empty") return;
+  fare=Number(settings.pickupFare); setState("pickup");
+}
+function pay(){if(state!=="service")return;updateFareByTime();paidAt=nowMs();setState("paid")}
+function openSettings(){
+  if(state!=="empty") return;
+  $("sInitialFare").value=settings.initialFare;$("sInitialMin").value=settings.initialMin;$("sIncrementMin").value=settings.incrementMin;
+  $("sIncrementFare").value=settings.incrementFare;$("sPickupFare").value=settings.pickupFare;$("sSpeedRate").value=settings.speedRate;
+  $("sStart").value=settings.surchargeStart;$("sEnd").value=settings.surchargeEnd;$("sSurchargeRate").value=settings.surchargeRate;
+  $("settingsPanel").classList.add("show");
+}
+function saveSettings(){
+  settings={initialFare:Number($("sInitialFare").value),initialMin:Number($("sInitialMin").value),incrementMin:Number($("sIncrementMin").value),
+    incrementFare:Number($("sIncrementFare").value),pickupFare:Number($("sPickupFare").value),speedRate:Number($("sSpeedRate").value),
+    surchargeStart:$("sStart").value,surchargeEnd:$("sEnd").value,surchargeRate:Number($("sSurchargeRate").value)};
+  saveLocal();$("settingsPanel").classList.remove("show");render();
+}
+function resetAll(){state="empty";fare=0;rideStart=null;paidAt=null;speedOn=false;rideBase=0;fareEvents=0;fareAccumulated=0;setState("empty");render()}
+
+function tick(){
+  const d=new Date();
+  $("date").textContent=`${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,"0")}/${String(d.getDate()).padStart(2,"0")} (${["日","月","火","水","木","金","土"][d.getDay()]})`;
+  $("clock").textContent=`${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+  if(state==="service"){updateFareByTime()}
+  $("fare").innerHTML=fmtYen(fare);
+  const sec=elapsedSec(), mm=Math.floor(sec/60), ss=Math.floor(sec%60);
+  $("elapsed").textContent=`${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
+  $("progressFill").style.width=(progress()*100).toFixed(2)+"%";
+  $("initialDisplay").textContent=Number(settings.initialFare).toLocaleString("ja-JP")+"円";
+  $("surchargeBtn").classList.toggle("active",isSurcharge() && state!=="empty");
+  requestAnimationFrame(()=>setState(state));
+}
+$("realBtn").onclick=startService;$("pickupBtn").onclick=pickup;$("payBtn").onclick=pay;$("sidePay").onclick=pay;
+$("speedBtn").onclick=()=>{if(state==="service"){speedOn=!speedOn;render()}};
+$("resetBtn").onclick=()=>$("resetModal").classList.add("show");
+$("cancelReset").onclick=()=>$("resetModal").classList.remove("show");
+$("confirmReset").onclick=()=>{$("resetModal").classList.remove("show");resetAll()};
+$("settingsBtn").onclick=openSettings;$("closeSettings").onclick=()=>$("settingsPanel").classList.remove("show");$("saveSettings").onclick=saveSettings;
+function render(){setState(state);updateFareByTime();$("fare").innerHTML=fmtYen(fare);$("initialDisplay").textContent=Number(settings.initialFare).toLocaleString("ja-JP")+"円";tick()}
+resetAll();setInterval(tick,250);tick();
+document.addEventListener("visibilitychange",()=>{if(!document.hidden) tick()});
+</script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script>
+</body>
+</html>
