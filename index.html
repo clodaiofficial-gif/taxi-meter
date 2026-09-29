@@ -10,7 +10,7 @@
 :root{
   --bg:#020509; --panel:#07101a; --panel2:#0b1521; --line:#17314b;
   --text:#f5f9ff; --muted:#8ea4bd; --blue:#168cff; --blue2:#36c7ff;
-  --gray:#7f8da0; --orange:#ff9d20; --red:#ff3b4d; --green:#18d477; --purple:#c33cff;
+  --gray:#7f8da0; --silver:#b8c2ce; --orange:#ff9d20; --red:#ff3b4d; --green:#18d477; --purple:#c33cff;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:var(--text);
@@ -52,18 +52,26 @@ button:disabled{cursor:default}
   color:#bfeaff;background:rgba(8,25,39,.7);box-shadow:0 0 12px rgba(0,141,255,.12)}
 .dot{width:10px;height:10px;border-radius:50%;background:#2cc7ff;box-shadow:0 0 10px #2cc7ff}
 .statusLabel{font-size:clamp(18px,2vw,30px);font-weight:650}
-.fareArea{position:absolute;left:35%;right:5%;top:12%;height:45%;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;padding-right:3%}
+.fareArea{position:absolute;left:35%;right:5%;top:12%;height:45%;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;padding-right:3%;border:1px solid #173b5e;border-radius:16px;background:rgba(2,7,13,.18);box-shadow:inset 0 0 18px rgba(0,95,160,.05),0 0 16px rgba(0,95,160,.06);transition:border-color .25s,box-shadow .25s,background .25s}
 .fareTitle{font-size:clamp(14px,1.4vw,22px);color:#b9cce0;letter-spacing:.12em;margin-bottom:2px}
 .fare{font-variant-numeric:tabular-nums;white-space:nowrap;font-size:clamp(58px,7.2vw,108px);line-height:.95;font-weight:700;letter-spacing:.02em;
   text-shadow:0 0 18px rgba(60,185,255,.32);transition:text-shadow .25s}
+.fareArea.emptyColor{border-color:#8f9aa7;background:rgba(110,120,132,.08);box-shadow:inset 0 0 22px rgba(180,195,210,.05),0 0 18px rgba(160,175,190,.08)}
+.fareArea.emptyColor .fare{color:#f2f5f8;text-shadow:0 0 18px rgba(200,215,230,.28)}
+.fareArea.pickupColor{border-color:#b73546;background:rgba(75,10,20,.14);box-shadow:inset 0 0 22px rgba(255,50,75,.08),0 0 18px rgba(255,50,75,.14)}
+.fareArea.pickupColor .fare{color:#fff1f3;text-shadow:0 0 18px rgba(255,80,100,.42)}
+.fareArea.paidColor{border-color:#e09a2b;background:rgba(75,42,5,.13);box-shadow:inset 0 0 22px rgba(255,154,40,.08),0 0 18px rgba(255,154,40,.14)}
+.fareArea.paidColor .fare{color:#fff7e8;text-shadow:0 0 18px rgba(255,174,60,.42)}
+.fareArea.serviceColor{border-color:#21a8ff;background:rgba(4,42,75,.10);box-shadow:inset 0 0 22px rgba(20,120,255,.08),0 0 18px rgba(25,145,255,.12)}
+.fareArea.serviceColor .fare{text-shadow:0 0 18px rgba(60,185,255,.42)}
 .yen{font-size:clamp(25px,2.7vw,42px);margin-left:7px;font-weight:500}
 .info{position:absolute;left:3%;top:29%;width:30%;color:#b7c9dd}
 .infoTitle{font-size:clamp(13px,1.3vw,20px);letter-spacing:.06em}
 .elapsed{font-size:clamp(30px,3.5vw,52px);font-variant-numeric:tabular-nums;color:#eaf5ff;margin-top:5px;text-shadow:0 0 12px rgba(65,175,255,.2)}
 .progressWrap{position:absolute;left:3%;right:3%;bottom:8%}
 .progressTitle{font-size:clamp(13px,1.3vw,20px);margin-bottom:8px;color:#dcecff}
-.progress{height:clamp(16px,2vw,25px);border:1px solid #1b67a4;border-radius:99px;background:#030a12;overflow:hidden;box-shadow:inset 0 0 10px #000}
-.progressFill{height:100%;width:0%;background:linear-gradient(90deg,#1168ff,#35cfff);box-shadow:0 0 14px rgba(35,178,255,.75);transition:width .2s}
+.progress{height:clamp(16px,2vw,25px);border:1px solid #1b67a4;border-radius:99px;background:#030a12;overflow:hidden;box-shadow:inset 0 0 10px #000;transition:border-color .25s,box-shadow .25s}
+.progressFill{height:100%;width:0%;background:linear-gradient(90deg,#1168ff,#35cfff);box-shadow:0 0 14px rgba(35,178,255,.75);transition:width .2s,background .25s,box-shadow .25s}
 .lower{height:auto;min-height:12%;border:1px solid #173b5e;border-radius:13px;background:linear-gradient(145deg,#081521,#02070d);
   display:flex;align-items:center;padding:1.2% 2%;position:relative;overflow:hidden}
 .lower:before{content:"";position:absolute;left:0;top:0;bottom:0;width:38%;background:linear-gradient(115deg,rgba(15,105,190,.16),transparent 70%);pointer-events:none}
@@ -73,7 +81,8 @@ button:disabled{cursor:default}
 .action{border-radius:14px;border:1px solid #23415f;background:linear-gradient(145deg,#0b1724,#03070c);font-size:clamp(18px,2vw,28px);letter-spacing:.08em;
   box-shadow:inset 0 0 18px rgba(31,77,120,.08);transition:.2s}
 .action.reset{border-color:#7b2330;color:#ff6d7b;box-shadow:inset 0 0 20px rgba(255,46,71,.12)}
-.action.pay{border-color:#1769c4;color:#55adff;box-shadow:inset 0 0 20px rgba(0,102,255,.12)}
+.action.pay{border-color:#d19b00;color:#ffe16a;background:linear-gradient(145deg,#241d04,#090801);box-shadow:inset 0 0 20px rgba(255,204,0,.12)}
+.action.pay.active{border-color:#ffd21a;color:#fff2a0;box-shadow:0 0 16px rgba(255,207,0,.34),inset 0 0 24px rgba(255,205,0,.18)}
 .action:disabled{opacity:.25}
 
 .right{display:grid;grid-template-rows:repeat(5,1fr) auto;gap:1.3%;min-height:0}
@@ -96,6 +105,10 @@ button:disabled{cursor:default}
 .surcharge{height:100%;border:1px solid #70228a;border-radius:12px;background:linear-gradient(145deg,#180b24,#08030d);
   color:#e9a5ff;display:flex;align-items:center;justify-content:center;font-size:clamp(15px,1.5vw,22px);letter-spacing:.08em;transition:.25s}
 .surcharge.active{border-color:#dc47ff;background:linear-gradient(145deg,rgba(109,24,143,.62),rgba(24,4,35,.95));color:#fff;box-shadow:0 0 18px rgba(205,50,255,.28),inset 0 0 25px rgba(193,35,255,.14)}
+.progress.surchargeColor{border-color:#b83bda;box-shadow:inset 0 0 10px #000,0 0 12px rgba(205,50,255,.16)}
+.progressFill.surchargeColor{background:linear-gradient(90deg,#7c1da5,#e35dff);box-shadow:0 0 14px rgba(205,50,255,.75)}
+.progress.speedColor{border-color:#27b977;box-shadow:inset 0 0 10px #000,0 0 12px rgba(24,213,119,.16)}
+.progressFill.speedColor{background:linear-gradient(90deg,#0a8a55,#39ed99);box-shadow:0 0 14px rgba(24,213,119,.75)}
 .settings{height:100%;border:1px solid #2a4058;border-radius:12px;background:#08111b;color:#9db0c5;font-size:clamp(15px,1.4vw,20px);transition:.2s}
 .settings:disabled{opacity:.3}
 
@@ -125,7 +138,6 @@ button:disabled{cursor:default}
 #portrait .pbox{border:1px solid #174b72;border-radius:16px;padding:30px;color:#cfe7fb;background:#07111b}
 @media (max-height:600px){.top{height:12%}.main{height:88%}.status{padding:5px 14px}.progressWrap{bottom:6%}}
 </style>
-<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#05070a"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="TAXI METER">
 </head>
 <body>
 <div id="app">
@@ -165,7 +177,7 @@ button:disabled{cursor:default}
 
         <div class="bottomActions">
           <button class="action reset" id="resetBtn">リセット</button>
-          <button class="action pay" id="payBtn" disabled>支払</button>
+          <button class="action pay" id="pauseBtn" disabled>一時停止</button>
         </div>
       </section>
 
@@ -194,8 +206,8 @@ button:disabled{cursor:default}
     <h2>設定</h2>
     <div class="grid">
       <div class="field"><label>初乗り料金（円）</label><input id="sInitialFare" type="number" min="0" step="1"></div>
-      <div class="field"><label>初乗り時間（分）</label><input id="sInitialMin" type="number" min="0.1" step="0.1"></div>
-      <div class="field"><label>加算時間（分）</label><input id="sIncrementMin" type="number" min="0.1" step="0.1"></div>
+      <div class="field"><label>初乗り時間（秒）</label><input id="sInitialMin" type="number" min="0.1" step="0.1"></div>
+      <div class="field"><label>加算時間（秒）</label><input id="sIncrementMin" type="number" min="0.1" step="0.1"></div>
       <div class="field"><label>加算額（円）</label><input id="sIncrementFare" type="number" min="0" step="1"></div>
       <div class="field"><label>迎車料金（円）</label><input id="sPickupFare" type="number" min="0" step="1"></div>
       <div class="field"><label>高速増加率（%）</label><input id="sSpeedRate" type="number" min="0" step="1"></div>
@@ -210,13 +222,22 @@ button:disabled{cursor:default}
 <div id="portrait"><div class="pbox">このメーターは横向き専用です。<br>iPadを横向きにしてください。</div></div>
 
 <script>
-const defaults={initialFare:500,initialMin:3,incrementMin:2,incrementFare:200,pickupFare:500,speedRate:10,surchargeStart:"22:00",surchargeEnd:"05:00",surchargeRate:20};
-let settings=loadSettings(), state="empty", fare=0, rideStart=null, paidAt=null, speedOn=false, rideBase=0, lastFare=0;
+const defaults={initialFare:500,initialMin:180,incrementMin:120,incrementFare:200,pickupFare:500,speedRate:10,surchargeStart:"22:00",surchargeEnd:"05:00",surchargeRate:20};
+let settings=loadSettings(), state="empty", fare=0, rideStart=null, paidAt=null, speedOn=false, rideBase=0, lastFare=0, paused=false, pausedElapsed=0;
 
 const $=id=>document.getElementById(id);
 const stateLabel=$("statusLabel");
 
-function loadSettings(){try{return {...defaults,...JSON.parse(localStorage.getItem("taxiMeterSettings")||"{}")}}catch(e){return {...defaults}}}
+function loadSettings(){
+  try{
+    const raw=localStorage.getItem("taxiMeterSettings");
+    if(!raw) return {...defaults};
+    const saved=JSON.parse(raw);
+    if(saved.initialMin!=null && Number(saved.initialMin)<60) saved.initialMin=Number(saved.initialMin)*60;
+    if(saved.incrementMin!=null && Number(saved.incrementMin)<60) saved.incrementMin=Number(saved.incrementMin)*60;
+    return {...defaults,...saved};
+  }catch(e){return {...defaults}}
+}
 function saveLocal(){localStorage.setItem("taxiMeterSettings",JSON.stringify(settings))}
 function fmtYen(n){return Math.round(n).toLocaleString("ja-JP")+"<span class='yen'>円</span>"}
 function roundYen(n){return Math.round(n)}
@@ -232,7 +253,7 @@ function multiplier(){
 function fareAt(elapsedSec){
   if(state==="empty") return 0;
   let f=Number(settings.initialFare);
-  const initial=Number(settings.initialMin)*60, inc=Number(settings.incrementMin)*60, add=Number(settings.incrementFare);
+  const initial=Number(settings.initialMin), inc=Number(settings.incrementMin), add=Number(settings.incrementFare);
   if(elapsedSec>=initial && inc>0){
     const count=Math.floor((elapsedSec-initial)/inc)+1;
     // 加算分だけ、その瞬間の倍率で計算。過去に確定した加算額は変更しない。
@@ -241,11 +262,11 @@ function fareAt(elapsedSec){
   return f;
 }
 let fareEvents=0, fareAccumulated=0, nextThreshold=0;
-function resetRideClock(){rideStart=null;fareEvents=0;fareAccumulated=0;nextThreshold=Number(settings.initialMin)*60;}
+function resetRideClock(){rideStart=null;fareEvents=0;fareAccumulated=0;nextThreshold=Number(settings.initialMin);}
 function updateFareByTime(){
   if(state!=="service") return;
   const elapsed=(nowMs()-rideStart)/1000;
-  const initial=Number(settings.initialMin)*60, inc=Number(settings.incrementMin)*60;
+  const initial=Number(settings.initialMin), inc=Number(settings.incrementMin);
   if(elapsed < initial){ fare=Number(settings.initialFare); return; }
   const count=inc>0 ? Math.floor((elapsed-initial)/inc)+1 : 0;
   while(fareEvents<count){
@@ -255,12 +276,14 @@ function updateFareByTime(){
   fare=roundYen(rideBase + Number(settings.initialFare)+fareAccumulated);
 }
 function elapsedSec(){
-  if(state==="service"&&rideStart) return Math.max(0,(nowMs()-rideStart)/1000);
-  if(state==="paid"&&rideStart&&paidAt) return Math.max(0,(paidAt-rideStart)/1000);
+  if(!rideStart) return 0;
+  if(paused) return pausedElapsed;
+  if(state==="service") return Math.max(0,(nowMs()-rideStart)/1000);
+  if(state==="paid"&&paidAt) return Math.max(0,(paidAt-rideStart)/1000);
   return 0;
 }
 function progress(){
-  const t=elapsedSec(), initial=Number(settings.initialMin)*60, inc=Number(settings.incrementMin)*60;
+  const t=elapsedSec(), initial=Number(settings.initialMin), inc=Number(settings.incrementMin);
   if(state==="empty") return 0;
   if(t<initial) return Math.max(0,Math.min(1,t/initial));
   if(inc<=0) return 1;
@@ -276,15 +299,31 @@ function setState(s){
   $("pickupBtn").disabled=s!=="empty";
   $("emptyBtn").disabled=s!=="empty";
   $("sidePay").disabled=s!=="service";
-  $("payBtn").disabled=s!=="service";
+  $("pauseBtn").disabled=s!=="service";
+  $("pauseBtn").classList.toggle("active",paused);
+  $("pauseBtn").textContent=paused?"再開":"一時停止";
   $("settingsBtn").disabled=s!=="empty";
   $("surchargeBtn").classList.toggle("active",isSurcharge() && s!=="empty");
   document.querySelector(".meter").style.boxShadow = s==="service"
     ? "inset 0 0 0 1px rgba(63,133,192,.07), 0 0 28px rgba(0,110,220,.15)"
     : "inset 0 0 0 1px rgba(63,133,192,.07), 0 0 25px rgba(0,95,160,.10)";
+  const fareArea=document.querySelector(".fareArea");
+  fareArea.classList.remove("emptyColor","pickupColor","paidColor","serviceColor");
+  if(s==="empty") fareArea.classList.add("emptyColor");
+  else if(s==="pickup") fareArea.classList.add("pickupColor");
+  else if(s==="paid") fareArea.classList.add("paidColor");
+  else if(s==="service") fareArea.classList.add("serviceColor");
+  const pg=document.querySelector(".progress"), pf=$("progressFill");
+  const speedActive=(s==="service" && speedOn);
+  const surchargeActive=(s!=="empty" && isSurcharge());
+  pg.classList.toggle("speedColor",speedActive);
+  pg.classList.toggle("surchargeColor",!speedActive && surchargeActive);
+  pf.classList.toggle("speedColor",speedActive);
+  pf.classList.toggle("surchargeColor",!speedActive && surchargeActive);
 }
 function startService(){
   if(state==="service"||state==="paid") return;
+  paused=false; pausedElapsed=0;
   if(state==="empty"){rideBase=0;fare=Number(settings.initialFare);rideStart=nowMs();paidAt=null;fareEvents=0;fareAccumulated=0;}
   else if(state==="pickup"){rideBase=Number(settings.pickupFare);rideStart=nowMs();paidAt=null;fareEvents=0;fareAccumulated=0;fare=rideBase+Number(settings.initialFare);}
   setState("service");
@@ -293,7 +332,19 @@ function pickup(){
   if(state!=="empty") return;
   fare=Number(settings.pickupFare); setState("pickup");
 }
-function pay(){if(state!=="service")return;updateFareByTime();paidAt=nowMs();setState("paid")}
+function togglePause(){
+  if(state!=="service" || !rideStart) return;
+  if(!paused){
+    updateFareByTime();
+    pausedElapsed=Math.max(0,(nowMs()-rideStart)/1000);
+    paused=true;
+  }else{
+    rideStart=nowMs()-pausedElapsed*1000;
+    paused=false;
+  }
+  setState(state); render();
+}
+function pay(){if(state!=="service")return;updateFareByTime();paidAt=nowMs();paused=false;setState("paid")}
 function openSettings(){
   if(state!=="empty") return;
   $("sInitialFare").value=settings.initialFare;$("sInitialMin").value=settings.initialMin;$("sIncrementMin").value=settings.incrementMin;
@@ -307,7 +358,7 @@ function saveSettings(){
     surchargeStart:$("sStart").value,surchargeEnd:$("sEnd").value,surchargeRate:Number($("sSurchargeRate").value)};
   saveLocal();$("settingsPanel").classList.remove("show");render();
 }
-function resetAll(){state="empty";fare=0;rideStart=null;paidAt=null;speedOn=false;rideBase=0;fareEvents=0;fareAccumulated=0;setState("empty");render()}
+function resetAll(){state="empty";fare=0;rideStart=null;paidAt=null;speedOn=false;rideBase=0;fareEvents=0;fareAccumulated=0;paused=false;pausedElapsed=0;setState("empty");render()}
 
 function tick(){
   const d=new Date();
@@ -322,7 +373,7 @@ function tick(){
   $("surchargeBtn").classList.toggle("active",isSurcharge() && state!=="empty");
   requestAnimationFrame(()=>setState(state));
 }
-$("realBtn").onclick=startService;$("pickupBtn").onclick=pickup;$("payBtn").onclick=pay;$("sidePay").onclick=pay;
+$("realBtn").onclick=startService;$("pickupBtn").onclick=pickup;$("pauseBtn").onclick=togglePause;$("sidePay").onclick=pay;
 $("speedBtn").onclick=()=>{if(state==="service"){speedOn=!speedOn;render()}};
 $("resetBtn").onclick=()=>$("resetModal").classList.add("show");
 $("cancelReset").onclick=()=>$("resetModal").classList.remove("show");
@@ -332,6 +383,5 @@ function render(){setState(state);updateFareByTime();$("fare").innerHTML=fmtYen(
 resetAll();setInterval(tick,250);tick();
 document.addEventListener("visibilitychange",()=>{if(!document.hidden) tick()});
 </script>
-<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script>
 </body>
 </html>
