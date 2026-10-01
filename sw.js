@@ -1,1 +1,12 @@
-const CACHE_NAME="taxi-meter-v1";const ASSETS=["./","./index.html","./manifest.webmanifest","./sw.js"];self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(ASSETS)));self.skipWaiting()});self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE_NAME).map(x=>caches.delete(x)))));self.clients.claim()});self.addEventListener("fetch",e=>{e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request)))})
+const CACHE = "taxi-meter-v3";
+const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./sw.js"];
+self.addEventListener("install", event => {
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
+  self.skipWaiting();
+});
+self.addEventListener("activate", event => {
+  event.waitUntil(self.clients.claim());
+});
+self.addEventListener("fetch", event => {
+  event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request)));
+});
